@@ -13,13 +13,13 @@ const cardSchema = new mongoose.Schema({
   },
   owner: {
     // eslint-disable-next-line no-undef
-    type: ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   likes: [
     {
       // eslint-disable-next-line no-undef
-      type: ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       default: "",
     },
   ],
