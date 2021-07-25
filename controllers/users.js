@@ -1,15 +1,28 @@
 const User = require("../models/user");
 
+const ERROR_BADREQUEST = 400;
+const ERROR_NOTFOUND = 404;
+const ERROR_DEFAULT = 500;
+
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch(() => {
+      res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
+    });
 };
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(ERROR_NOTFOUND).send({
+          message: "Пользователь по указанному _id не найден.",
+        });
+      }
+      res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
+    });
 };
 
 module.exports.createUser = (req, res) => {
@@ -17,7 +30,14 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(ERROR_BADREQUEST).send({
+          message: "Переданы некорректные данные при создании пользователя",
+        });
+      }
+      res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
+    });
 };
 
 module.exports.patchUser = (req, res) => {
@@ -29,10 +49,22 @@ module.exports.patchUser = (req, res) => {
     {
       new: true,
       runValidators: true,
+      // eslint-disable-next-line comma-dangle
     }
   )
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(ERROR_NOTFOUND).send({
+          message: "Пользователь по указанному _id не найден.",
+        });
+      } else if (err.name === "ValidationError") {
+        res.status(ERROR_BADREQUEST).send({
+          message: "Переданы некорректные данные при обновлении профиля",
+        });
+      }
+      res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
+    });
 };
 
 module.exports.patchAvatar = (req, res) => {
@@ -44,8 +76,20 @@ module.exports.patchAvatar = (req, res) => {
     {
       new: true,
       runValidators: true,
-    },
+      // eslint-disable-next-line comma-dangle
+    }
   )
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(ERROR_NOTFOUND).send({
+          message: "Пользователь по указанному _id не найден.",
+        });
+      } else if (err.name === "ValidationError") {
+        res.status(ERROR_BADREQUEST).send({
+          message: "Переданы некорректные данные при обновлении аватара",
+        });
+      }
+      res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
+    });
 };
