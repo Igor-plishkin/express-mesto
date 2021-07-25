@@ -20,3 +20,20 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
 };
+
+module.exports.likeCard = (req, res) => {
+  const { name, link } = req.body;
+  const owner = req.user._id;
+
+  Card.create({ name, link, owner })
+    .then((card) => res.send({ data: card }))
+    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+};
+module.exports.dislikeCard = (req, res) => {
+  const { name, link } = req.body;
+  const owner = req.user._id;
+
+  Card.create({ name, link, owner })
+    .then((card) => res.send({ data: card }))
+    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+};
