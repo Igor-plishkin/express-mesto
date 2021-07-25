@@ -12,17 +12,13 @@ const cardSchema = new mongoose.Schema({
     required: true,
   },
   owner: {
-    // eslint-disable-next-line no-undef
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
-  likes: [
-    {
-      // eslint-disable-next-line no-undef
-      type: mongoose.Schema.Types.ObjectId,
-      default: "",
-    },
-  ],
+  likes: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
+    default: [],
+  },
   createdAt: {
     type: Date,
     default: Date.now,

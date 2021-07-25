@@ -7,7 +7,9 @@ const ERROR_DEFAULT = 500;
 module.exports.getAllCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" }));
+    .catch(() => {
+      res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
+    });
 };
 
 module.exports.deleteCard = (req, res) => {
@@ -43,13 +45,18 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true },
+    // eslint-disable-next-line comma-dangle
+    { new: true }
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(ERROR_BADREQUEST).send({
           message: "Переданы некорректные данные для постановки лайка",
+        });
+      } else if (err.name === "CastError") {
+        res.status(ERROR_NOTFOUND).send({
+          message: "Карточка с указанным _id не найдена.",
         });
       }
       res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
@@ -59,13 +66,18 @@ module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true },
+    // eslint-disable-next-line comma-dangle
+    { new: true }
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(ERROR_BADREQUEST).send({
           message: "Переданы некорректные данные для снятия лайка",
+        });
+      } else if (err.name === "CastError") {
+        res.status(ERROR_NOTFOUND).send({
+          message: "Карточка с указанным _id не найдена.",
         });
       }
       res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
