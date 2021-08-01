@@ -14,11 +14,20 @@ module.exports.getAllCards = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail(() => {
+      const error = new Error("Нет карточки по заданному id");
+      error.statusCode = ERROR_NOTFOUND;
+      throw error;
+    })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(ERROR_NOTFOUND).send({
+        res.status(ERROR_BADREQUEST).send({
           message: "Карточка с указанным _id не найдена.",
+        });
+      } else if (err.statusCode === ERROR_NOTFOUND) {
+        res.status(ERROR_NOTFOUND).send({
+          message: err.message,
         });
       }
       res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
@@ -48,6 +57,11 @@ module.exports.likeCard = (req, res) => {
     // eslint-disable-next-line comma-dangle
     { new: true }
   )
+    .orFail(() => {
+      const error = new Error("Нет карточки по заданному id");
+      error.statusCode = ERROR_NOTFOUND;
+      throw error;
+    })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -55,8 +69,12 @@ module.exports.likeCard = (req, res) => {
           message: "Переданы некорректные данные для постановки лайка",
         });
       } else if (err.name === "CastError") {
-        res.status(ERROR_NOTFOUND).send({
+        res.status(ERROR_BADREQUEST).send({
           message: "Карточка с указанным _id не найдена.",
+        });
+      } else if (err.statusCode === ERROR_NOTFOUND) {
+        res.status(ERROR_NOTFOUND).send({
+          message: err.message,
         });
       }
       res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
@@ -69,6 +87,11 @@ module.exports.dislikeCard = (req, res) => {
     // eslint-disable-next-line comma-dangle
     { new: true }
   )
+    .orFail(() => {
+      const error = new Error("Нет карточки по заданному id");
+      error.statusCode = ERROR_NOTFOUND;
+      throw error;
+    })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -76,8 +99,12 @@ module.exports.dislikeCard = (req, res) => {
           message: "Переданы некорректные данные для снятия лайка",
         });
       } else if (err.name === "CastError") {
-        res.status(ERROR_NOTFOUND).send({
+        res.status(ERROR_BADREQUEST).send({
           message: "Карточка с указанным _id не найдена.",
+        });
+      } else if (err.statusCode === ERROR_NOTFOUND) {
+        res.status(ERROR_NOTFOUND).send({
+          message: err.message,
         });
       }
       res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
