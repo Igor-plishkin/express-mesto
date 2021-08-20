@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const ERROR_BADREQUEST = 400;
@@ -50,7 +51,7 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(ERROR_BADREQUEST).send({
-          message: "Переданы некорректные данные при создании пользователя",
+          message: err.message,
         });
       }
       res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
@@ -126,5 +127,22 @@ module.exports.patchAvatar = (req, res) => {
         });
       }
       res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
+    });
+};
+// controllers/users.js
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, "secret-key", { expiresIn: "7d" });
+
+      res.send({ token });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
     });
 };
