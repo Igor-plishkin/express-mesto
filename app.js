@@ -18,19 +18,9 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
   useUnifiedTopology: true,
 });
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "60fd6a478cefae0e605cdd0d",
-  };
-
-  next();
-});
-
 app.post("/signin", login);
 app.post("/signup", createUser);
-
 app.use(auth);
-
 app.use("/", require("./routes/users"));
 app.use("/", require("./routes/cards"));
 

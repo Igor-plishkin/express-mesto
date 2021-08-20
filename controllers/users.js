@@ -153,7 +153,6 @@ module.exports.patchAvatar = (req, res) => {
       res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
     });
 };
-// controllers/users.js
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
