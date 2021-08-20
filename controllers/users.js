@@ -14,7 +14,31 @@ module.exports.getAllUsers = (req, res) => {
     });
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUserInfo = (req, res) => {
+  User.findById(req.user._id)
+    .orFail(() => {
+      const error = new Error("Нет пользователя по заданному id");
+      error.statusCode = ERROR_NOTFOUND;
+      throw error;
+    })
+    .then((user) => {
+      res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(ERROR_BADREQUEST).send({
+          message: "Переданы некорректные данные",
+        });
+      } else if (err.statusCode === ERROR_NOTFOUND) {
+        res.status(ERROR_NOTFOUND).send({
+          message: err.message,
+        });
+      }
+      res.status(ERROR_DEFAULT).send({ message: "Произошла ошибка" });
+    });
+};
+
+module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .orFail(() => {
       const error = new Error("Нет пользователя по заданному id");
