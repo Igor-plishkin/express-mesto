@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator(avatar) {
         // eslint-disable-next-line no-useless-escape
-        return /^(https?)?:\/\/[w]*\.?[\w-]*\.[a-z]+[\/\w^\w#-]*/.test(avatar);
+        return /^(https?):\/\/[w]*\.?[\w-]*\.[a-z]+[\/\w^\w#-]*/.test(avatar);
       },
       message: "Некорректная ссылка на картинку",
     },

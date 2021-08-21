@@ -13,7 +13,7 @@ const cardSchema = new mongoose.Schema({
     validate: {
       validator(link) {
         // eslint-disable-next-line no-useless-escape
-        return /https?:\/\/[w]*\.?[\w-]*\.[a-z]+[\/\w^\w#-]*/.test(link);
+        return /^(https?):\/\/[w]*\.?[\w-]*\.[a-z]+[\/\w^\w#-]*/.test(link);
       },
       message: "Некорректная ссылка на картинку",
     },
