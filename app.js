@@ -1,9 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const { celebrate, Joi } = require("celebrate");
+const { celebrate, Joi, errors } = require("celebrate");
 const { login, createUser } = require("./controllers/users");
 const auth = require("./middlewares/auth");
+const NotFoundError = require("./errors/not-found-err");
 
 const { PORT = 3000 } = process.env;
 
@@ -38,6 +39,11 @@ app.use(auth);
 app.use("/", require("./routes/users"));
 app.use("/", require("./routes/cards"));
 
+app.use("*", () => {
+  throw new NotFoundError("Страница не найдена");
+});
+
+app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
 

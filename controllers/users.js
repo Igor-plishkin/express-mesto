@@ -24,6 +24,7 @@ module.exports.getUserInfo = (req, res, next) => {
       if (err.name === "CastError") {
         throw new BadRequestError("Переданы некорректные данные");
       }
+      next(err);
     })
     .catch(next);
 };
@@ -40,6 +41,7 @@ module.exports.getUserById = (req, res, next) => {
       if (err.name === "CastError") {
         throw new BadRequestError("Переданы некорректные данные");
       }
+      next(err);
     })
     .catch(next);
 };
@@ -128,7 +130,7 @@ module.exports.login = (req, res, next) => {
       res.send({ token });
     })
     .catch(() => {
-      throw new UnauthorizedError("Не валидный токен");
+      throw new UnauthorizedError("Не правильные почта или пароль");
     })
     .catch(next);
 };

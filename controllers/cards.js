@@ -28,6 +28,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (err.name === "CastError") {
         throw new BadRequestError("Переданы некорректные данные при удалении карточки");
       }
+      next(err);
     })
     .catch(next);
 };
@@ -42,6 +43,7 @@ module.exports.createCard = (req, res, next) => {
       if (err.name === "ValidationError") {
         throw new BadRequestError("Переданы некорректные данные при создании карточки");
       }
+      next(err);
     })
     .catch(next);
 };
@@ -63,6 +65,7 @@ module.exports.likeCard = (req, res, next) => {
       } else if (err.name === "CastError") {
         throw new BadRequestError("Переданы некорректные данные для постановки лайка");
       }
+      next(err);
     })
     .catch(next);
 };
@@ -83,6 +86,7 @@ module.exports.dislikeCard = (req, res, next) => {
       } else if (err.name === "CastError") {
         throw new BadRequestError("Переданы некорректные данные для снятия лайка");
       }
+      next(err);
     })
     .catch(next);
 };
